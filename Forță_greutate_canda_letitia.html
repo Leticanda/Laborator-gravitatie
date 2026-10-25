@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laborator virtual | Forța de greutate și Legile lui Kepler</title>
+<style>
+:root{
+  --bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263d59;
+  --text:#eaf3ff;--muted:#9db1ca;--cyan:#58e1f2;--blue:#72a7ff;
+  --gold:#ffd166;--green:#6ee7b7;--red:#ff8e9b;--purple:#c084fc;--orange:#fb923c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#142844 0%,var(--bg) 58%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.5}
+header{padding:26px 18px 16px;text-align:center}
+.eyebrow{color:var(--cyan);text-transform:uppercase;letter-spacing:.17em;font-size:.74rem;font-weight:800}
+h1{margin:7px 0 5px;font-size:clamp(1.65rem,4vw,2.5rem);line-height:1.15}
+.subtitle{color:var(--muted);margin:0 auto;max-width:760px}
+.wrap{max-width:1100px;margin:auto;padding:0 16px 36px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tab{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#0b1728;color:var(--muted);font-weight:750;cursor:pointer;transition:all .2s ease;font-size:.88rem}
+.tab:hover{border-color:var(--cyan);color:#fff}
+.tab.active{background:#12364b;border-color:var(--cyan);color:#eaffff;box-shadow:0 0 18px #58e1f21c}
+.panel{background:linear-gradient(145deg,#122138ee,#0d192aee);border:1px solid var(--line);border-radius:18px;padding:clamp(15px,3vw,24px);box-shadow:0 12px 40px #0002}
+.hidden{display:none!important}
+h2{font-size:1.35rem;margin:0 0 8px}
+h3{font-size:1.02rem;margin:0 0 10px}
+p{margin:7px 0}
+.muted{color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px}
+.layout-3col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+@media(max-width:850px){.layout,.layout-3col{grid-template-columns:1fr}.tab{flex:1;min-width:130px}}
+.card{background:#0a1626;border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.big{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:850;color:var(--cyan);font-variant-numeric:tabular-nums}
+.unit{font-size:.9rem;color:var(--muted);font-weight:600}
+.formula{font-size:clamp(1.1rem,2.4vw,1.45rem);font-weight:800;color:var(--gold);text-align:center;padding:10px}
+input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin:6px 0}
+button{font:inherit}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.smallbtn{background:#142840;border:1px solid #2a4968;color:var(--text);padding:7px 11px;border-radius:9px;cursor:pointer;transition:all .15s ease}
+.smallbtn:hover{border-color:var(--cyan);background:#1a3352}
+.smallbtn.active-btn{background:#184a6b;border-color:var(--cyan);color:#fff}
+.statgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{padding:12px;border-radius:12px;background:#13243a;border:1px solid #223d5a}
+.stat label{display:block;color:var(--muted);font-size:.82rem}
+.stat strong{display:block;font-size:1.2rem;margin-top:3px;font-variant-numeric:tabular-nums}
+svg{display:block;width:100%;height:auto}
+.svglabel{font:13px system-ui, sans-serif;fill:#d9eaff}
+.question{border-left:3px solid var(--gold);padding:12px 14px;background:#1b2634;border-radius:0 10px 10px 0;margin-top:14px}
+.answers{display:grid;gap:8px;margin-top:10px}
+.answer{padding:10px 12px;text-align:left;border-radius:10px;border:1px solid var(--line);background:#101f32;color:var(--text);cursor:pointer;transition:background .2s}
+.answer:hover{border-color:var(--cyan)}
+.answer.correct{border-color:var(--green);background:#12352f}
+.answer.wrong{border-color:var(--red);background:#3b202b}
+.feedback{min-height:26px;color:var(--muted);margin-top:8px;font-size:.92rem}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:9px 7px;border-bottom:1px solid #243a53;text-align:right}
+th{font-size:.82rem;color:var(--muted);font-weight:700}
+th:first-child,td:first-child{text-align:left}
+tbody tr:last-child td{border-bottom:0}
+.tablewrap{overflow-x:auto}
+.note{border:1px solid #31516a;background:#10283a;padding:12px 14px;border-radius:12px;margin-top:12px}
+.conclusion{border:1px solid #5a4b26;background:#2a2518;padding:14px;border-radius:12px;margin-top:14px}
+.footer{text-align:center;color:#7088a5;font-size:.8rem;padding:22px 8px}
+.pill{display:inline-block;padding:3px 8px;border-radius:99px;background:#12394b;color:var(--cyan);font-size:.78rem;font-weight:750}
+.badge-gold{color:var(--gold);font-weight:700}
+.param-box{background:#0e1b2c;border:1px solid #1f354e;border-radius:10px;padding:10px 12px;margin-top:8px}
+.param-title{font-weight:700;color:var(--cyan);font-size:.9rem;display:flex;justify-content:space-between}
+.toggle-label{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer;margin-right:12px;color:var(--muted)}
+.toggle-label input{accent-color:var(--cyan);cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Laborator virtual de fizică</div>
+  <h1>Gravitația și mișcarea orbitală</h1>
+  <p class="subtitle">De la forța de greutate la suprafață până la dinamica sistemului solar.</p>
+</header>
+<main class="wrap">
+  <nav class="tabs" aria-label="Etapele laboratorului">
+    <button class="tab" id="tab1" onclick="showStage(1)">01 · Observăm forța</button>
+    <button class="tab" id="tab2" onclick="showStage(2)">02 · Raportul G/m</button>
+    <button class="tab" id="tab3" onclick="showStage(3)">03 · Variația lui g pe Pământ</button>
+    <button class="tab" id="tab4" onclick="showStage(4)">04 · Dependența de distanță</button>
+    <button class="tab active" id="tab5" onclick="showStage(5)">05 · Legile lui Kepler</button>
+    <button class="tab" id="tab6" onclick="showStage(6)">06 · Balanța Cavendish</button>
+  </nav>
+
+  <!-- ETAPA 1 -->
+  <section id="stage1" class="panel hidden">
+    <span class="pill">Etapa 1 · Explorare</span>
+    <h2 style="margin-top:10px">Cum acționează forța de greutate?</h2>
+    <p class="muted">Modifică masa corpului. Observă valoarea forței și sensul vectorului care o reprezintă.</p>
+    <div class="layout">
+      <div class="card">
+        <h3>Corpul și vectorul forței</h3>
+        <svg viewBox="0 0 500 310" role="img" aria-label="Corp deasupra Pământului cu vectorul greutății">
+          <defs>
+            <linearGradient id="earthGrad1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#276d9b"/><stop offset="1" stop-color="#102d52"/></linearGradient>
+            <marker id="arrow1" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ffd166"/></marker>
+            <filter id="glow1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <circle cx="250" cy="350" r="180" fill="url(#earthGrad1)" stroke="#58e1f2" stroke-width="2"/>
+          <path d="M110 250 Q150 220 190 240 T270 238 T360 250" fill="none" stroke="#58e1f2" stroke-opacity=".4" stroke-width="2"/>
+          <rect x="220" y="48" width="60" height="45" rx="8" fill="#72a7ff" stroke="#c3ddff" stroke-width="2"/>
+          <text x="250" y="75" text-anchor="middle" fill="#08111f" font-size="15" font-weight="800">m</text>
+          <line id="forceArrow" x1="250" y1="98" x2="250" y2="190" stroke="#ffd166" stroke-width="5" marker-end="url(#arrow1)" filter="url(#glow1)"/>
+          <text x="270" y="142" fill="#ffd166" font-size="18" font-weight="800">G</text>
+          <text x="250" y="288" text-anchor="middle" class="svglabel">Pământ</text>
+          <text x="250" y="24" text-anchor="middle" class="svglabel">Forța este orientată (aproximativ) spre centrul Pământului</text>
+        </svg>
+        <div class="formula">G = m · g</div>
+        <p class="muted" style="text-align:center">Model preliminar: g = 9,81 N/kg. <br><span style="font-size:.82rem">Notație: aici G este forța de greutate; nu se confundă cu constanta gravitațională universală G<sub>N</sub> din etapele 4 și 6.</span></p>
+      </div>
+      <div class="card">
+        <h3>Controlează masa</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <label for="mass1">Masă, m</label><div><span id="mass1Value" class="big">5,0</span> <span class="unit">kg</span></div>
+        </div>
+        <input id="mass1" type="range" min="1" max="20" step="0.5" value="5" oninput="updateStage1()">
+        <div class="btnrow">
+          <button class="smallbtn" onclick="setMass(1)">1 kg</button>
+          <button class="smallbtn" onclick="setMass(5)">5 kg</button>
+          <button class="smallbtn" onclick="setMass(10)">10 kg</button>
+          <button class="smallbtn" onclick="setMass(20)">20 kg</button>
+        </div>
+        <div class="statgrid">
+          <div class="stat"><label>Masă (m)</label><strong id="mass1Stat">5,0 kg</strong></div>
+          <div class="stat"><label>Forța de greutate (G)</label><strong id="weight1Stat">49,1 N</strong></div>
+        </div>
+        <div class="question">
+          <strong>Predicție</strong>
+          <p>Dacă masa corpului se dublează, iar locul rămâne neschimbat, ce se întâmplă cu forța de greutate?</p>
+          <div class="answers" id="q1">
+            <button class="answer" onclick="answer1(this,false)">A. Rămâne aceeași.</button>
+            <button class="answer" onclick="answer1(this,true)">B. Se dublează.</button>
+            <button class="answer" onclick="answer1(this,false)">C. Se înjumătățește.</button>
+          </div>
+          <div class="feedback" id="feedback1" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETAPA 2 -->
+  <section id="stage2" class="panel hidden">
+    <span class="pill">Etapa 2 · Investigație</span>
+    <h2 style="margin-top:10px">Este raportul G/m constant?</h2>
+    <p class="muted">Colectează măsurători pentru mase diferite. Compară forța de greutate cu masa și identifică proporționalitatea.<br><span style="font-size:.84rem">Atenție: valorile sunt <b>simulate</b> din modelul G = m·g, fără erori de măsură. Într-un experiment real, punctele ar avea incertitudini și s-ar așeza doar aproximativ pe dreaptă.</span></p>
+    <div class="layout">
+      <div class="card">
+        <h3>1. Tabel de măsurători</h3>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Masă m (kg)</th><th>Greutate G (N)</th><th>Raport G/m (N/kg)</th></tr></thead>
+            <tbody id="measurements"></tbody>
+          </table>
+        </div>
+        <div class="btnrow">
+          <button class="smallbtn" onclick="addMeasurement()">+ Adaugă măsurătoare</button>
+          <button class="smallbtn" onclick="resetMeasurements()">Resetează tabelul</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>2. Graficul G în funcție de m</h3>
+        <svg id="chart" viewBox="0 0 500 330" role="img" aria-label="Graficul greutății în funcție de masă"></svg>
+        <div class="statgrid">
+          <div class="stat"><label>Raport mediu G/m</label><strong id="avgRatio">9,81 N/kg</strong></div>
+          <div class="stat"><label>Panta graficului</label><strong id="slope">9,81 N/kg</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETAPA 3 -->
+  <section id="stage3" class="panel hidden">
+    <span class="pill">Etapa 3 · Variația pe suprafață</span>
+    <h2 style="margin-top:10px">Cum variază accelerația gravitațională pe Pământ?</h2>
+    <p class="muted">Modifică latitudinea și altitudinea terestră.</p>
+    <div class="layout">
+      <div class="card">
+        <h3>Poziția pe glob și vectorul forței</h3>
+        <svg id="earthMap" viewBox="0 0 500 360" role="img" aria-label="Glob terestru cu poziția corpului">
+          <defs>
+            <radialGradient id="globeGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1e4d75"/>
+              <stop offset="70%" stop-color="#122d4a"/>
+              <stop offset="100%" stop-color="#0a1a2e"/>
+            </radialGradient>
+            <marker id="arrow3" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ffd166"/></marker>
+          </defs>
+          <line x1="250" y1="20" x2="250" y2="340" stroke="#375577" stroke-dasharray="4,4" stroke-width="1.5"/>
+          <ellipse cx="250" cy="180" rx="150" ry="142" fill="url(#globeGrad)" stroke="#58e1f2" stroke-width="2"/>
+          <line x1="100" y1="180" x2="400" y2="180" stroke="#58e1f2" stroke-opacity=".35" stroke-dasharray="3,3"/>
+          <g id="bodyGroup">
+            <line id="forceVec" x1="250" y1="38" x2="250" y2="95" stroke="#ffd166" stroke-width="4" marker-end="url(#arrow3)"/>
+            <rect id="bodyRect" x="240" y="28" width="20" height="20" rx="4" fill="#72a7ff" stroke="#fff" stroke-width="1.5"/>
+            <text id="bodyText" x="250" y="42" text-anchor="middle" fill="#08111f" font-size="10" font-weight="900">m</text>
+            <text id="vecLabel" x="265" y="70" fill="#ffd166" font-size="13" font-weight="800">G</text>
+          </g>
+          <circle cx="250" cy="180" r="3" fill="#58e1f2"/>
+        </svg>
+        <div class="statgrid" style="margin-top:10px">
+          <div class="stat"><label>g calculat</label><strong id="gValText" style="color:var(--cyan)">9,806 N/kg</strong></div>
+          <div class="stat"><label>Greutate (G = m·g)</label><strong id="gWeightText" style="color:var(--gold)">686,4 N</strong></div>
+        </div>
+        <p class="muted" style="font-size:.82rem;margin-top:10px">Desen schematic: aplatizarea Pământului este exagerată (≈ 5 % în desen, ≈ 0,34 % în realitate). Săgeata G indică exact spre centru doar la poli și la ecuator (deviația reală față de centru este ≤ ≈ 0,1°). Variația lui g se datorează rotației Pământului și aplatizării; formula folosită dă greutatea <i>efectivă</i> (include efectul centrifug).</p>
+      </div>
+      <div class="card">
+        <h3>Parametrii de măsură</h3>
+        <div class="btnrow">
+          <button class="smallbtn" onclick="setPreset(0, 0)">Ecuator</button>
+          <button class="smallbtn" onclick="setPreset(45, 0)">România (45°)</button>
+          <button class="smallbtn" onclick="setPreset(90, 0)">Polul Nord</button>
+          <button class="smallbtn" onclick="setPreset(28, 8848)">Vf. Everest</button>
+        </div>
+        <div style="margin-top:14px">
+          <label>Latitudine (φ): <span class="badge-gold" id="latDisplay">45</span>°</label>
+          <input id="latSlider" type="range" min="0" max="90" step="1" value="45" oninput="updateStage3()">
+        </div>
+        <div style="margin-top:14px">
+          <label>Altitudine (h): <span class="badge-gold" id="altDisplay">0</span> m</label>
+          <input id="altSlider" type="range" min="0" max="9000" step="100" value="0" oninput="updateStage3()">
+        </div>
+        <div style="margin-top:14px">
+          <label>Masa (m): <span class="badge-gold" id="mass3Display">70</span> kg</label>
+          <input id="mass3Slider" type="range" min="1" max="100" step="1" value="70" oninput="updateStage3()">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETAPA 4 -->
+  <section id="stage4" class="panel hidden">
+    <span class="pill">Etapa 4 · Modelul exterior (Clasa a IX-a)</span>
+    <h2 style="margin-top:10px">Dependența gravitației de distanța față de centru</h2>
+    <div class="card" style="margin-top:10px;background:#0d1c30;border-color:var(--cyan)">
+      <div class="formula">g(r) = (G<sub>N</sub> · M) / r<sup>2</sup></div>
+    </div>
+    <div class="layout" style="margin-top:14px">
+      <div class="card">
+        <h3>Sistemul și forța</h3>
+        <svg id="orbitSvg" viewBox="0 0 500 320" role="img">
+          <defs><marker id="arrow4" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ffd166"/></marker></defs>
+          <circle cx="130" cy="160" r="3" fill="#ffd166"/>
+          <circle cx="130" cy="160" r="45" fill="#1a4b7c" stroke="#58e1f2" stroke-width="1.8"/>
+          <circle id="orbitPath" cx="130" cy="160" r="135" fill="none" stroke="#3d628a" stroke-dasharray="4,4" stroke-width="1.5"/>
+          <line id="rLine" x1="130" y1="160" x2="265" y2="160" stroke="#ffd166" stroke-width="2" stroke-opacity=".7"/>
+          <text id="rTextLabel" x="195" y="152" fill="#ffd166" font-size="12" text-anchor="middle">r = 3,0 R</text>
+          <g id="satGroup" transform="translate(265, 160)">
+            <rect x="-8" y="-8" width="16" height="16" rx="4" fill="#6ee7b7" stroke="#fff" stroke-width="1.5"/>
+            <line id="gVector4" x1="0" y1="0" x2="-45" y2="0" stroke="#ffd166" stroke-width="3" marker-end="url(#arrow4)"/>
+          </g>
+        </svg>
+        <div class="statgrid">
+          <div class="stat"><label>g(r)</label><strong id="gVal4" style="color:var(--cyan)">1,09 N/kg</strong></div>
+          <div class="stat"><label>Forța F (pentru m = 1000 kg)</label><strong id="fVal4" style="color:var(--gold)">1090 N</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Controale r</h3>
+        <label>Distanța r (în unități R): <span class="badge-gold" id="rRatioDisplay">3.00</span> R</label>
+        <input id="rSlider" type="range" min="1.0" max="7.0" step="0.05" value="3.0" oninput="updateStage4()">
+        <div class="statgrid" style="margin-top:12px">
+          <div class="stat"><label>Distanță km</label><strong id="distKm">19 113 km</strong></div>
+          <div class="stat"><label>Altitudine h</label><strong id="altKm">12 742 km</strong></div>
+        </div>
+        <p class="muted" style="font-size:.82rem;margin-top:10px">La r = 1,00 R se obține g = GM/R² ≈ 9,820 N/kg (Pământ sferic, fără rotație). Valorile 9,78–9,83 N/kg din etapa 3 includ rotația și aplatizarea, iar în etapele 1–2 se folosește valoarea rotunjită 9,81 N/kg.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETAPA 5: LEGILE LUI KEPLER (CLASA A IX-A) -->
+  <section id="stage5" class="panel">
+    <span class="pill">Etapa 5 · Mecanică cerească (Clasa a IX-a)</span>
+    <h2 style="margin-top:10px">Legile lui Kepler și dinamica orbitală</h2>
+    <p class="muted">Explorează mișcarea unei planete în jurul Soarelui sub acțiunea forței de atracție gravitațională universale.</p>
+
+    <!-- Prezentarea celor 3 legi sintetice -->
+    <div class="layout-3col" style="margin-top:14px">
+      <div class="card" style="border-top:3px solid var(--cyan)">
+        <strong style="color:var(--cyan)">Legea I (a orbitelor)</strong>
+        <p style="font-size:.87rem;margin-top:6px">
+          Planetele descriu <b>elipse</b>, Soarele aflându-se în <b>unul dintre focare</b>.
+        </p>
+        <div style="font-size:.8rem;color:var(--muted)">Forma elipsei este definită de semiaxa mare <i>a</i> și excentricitatea <i>e</i>.</div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--gold)">
+        <strong style="color:var(--gold)">Legea a II-a (a ariilor)</strong>
+        <p style="font-size:.87rem;margin-top:6px">
+          Raza vectoare mătură <b>arii egale în intervale de timp egale</b> (viteza areolară este constantă).
+        </p>
+        <div style="font-size:.8rem;color:var(--muted)">Planeta se mișcă cel mai rapid la <b>periheliu</b> și cel mai lent la <b>afeliu</b>.</div>
+      </div>
+
+      <div class="card" style="border-top:3px solid var(--purple)">
+        <strong style="color:var(--purple)">Legea a III-a (a perioadelor)</strong>
+        <p style="font-size:.87rem;margin-top:6px">
+          Pătratul perioadei de revoluție este direct proporțional cu cubul semiaxiei mari:
+        </p>
+        <div class="formula" style="font-size:1.05rem;padding:2px 0;color:var(--purple)">T<sup>2</sup> / a<sup>3</sup> = constant</div>
+        <div style="font-size:.8rem;color:var(--muted)">Valabilă pentru corpurile care orbitează aceeași stea; constanta este 4π²/(G<sub>N</sub>·M<sub>Soare</sub>) și are valoarea 1 doar pentru a în UA și T în ani.</div>
+      </div>
+    </div>
+
+    <!-- Simulare interactivă Kepler -->
+    <div class="layout" style="margin-top:16px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3>Simularea orbitei planetare</h3>
+          <span id="sectorBadge" class="pill" style="display:none;background:#2d2105;color:var(--gold);border:1px solid #7c5e10">Arii egale activate (Δt constant)</span>
+        </div>
+        
+        <svg id="keplerSvg" viewBox="0 0 520 380" role="img" aria-label="Orbita eliptică a planetei în jurul Soarelui">
+          <defs>
+            <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff7a3"/>
+              <stop offset="40%" stop-color="#ffd166"/>
+              <stop offset="100%" stop-color="#f97316"/>
+            </radialGradient>
+            <filter id="sunGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <marker id="arrowVel" markerWidth="7" markerHeight="7" refX="4" refY="2" orient="auto"><path d="M0,0 L0,4 L5,2 z" fill="#6ee7b7"/></marker>
+          </defs>
+
+          <!-- Axe elipsă -->
+          <line id="majorAxis" x1="40" y1="190" x2="480" y2="190" stroke="#1d3550" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <line id="minorAxis" x1="260" y1="50" x2="260" y2="330" stroke="#1d3550" stroke-width="1.5" stroke-dasharray="3,3"/>
+
+          <!-- Sectoare Legea a II-a (arii egale) -->
+          <g id="keplerSectorsGroup"></g>
+
+          <!-- Traiectoria eliptică -->
+          <ellipse id="orbitEllipse" cx="260" cy="190" rx="180" ry="150" fill="none" stroke="#3b6999" stroke-width="2"/>
+
+          <!-- Focarul secundar (vid) F2 -->
+          <circle id="focalPoint2" cx="330" cy="190" r="3.5" fill="#587494"/>
+          <text id="f2Label" x="330" y="208" text-anchor="middle" fill="#688ca8" font-size="11">Focar vid (F₂)</text>
+
+          <!-- Raza vectoare r (Soare -> Planetă) -->
+          <line id="radiusVector" x1="190" y1="190" x2="260" y2="40" stroke="#ffd166" stroke-width="2" stroke-opacity=".85"/>
+
+          <!-- Soarele în focarul F1 -->
+          <circle id="sunCircle" cx="190" cy="190" r="14" fill="url(#sunGrad)" filter="url(#sunGlow)"/>
+          <text id="sunText" x="190" y="222" text-anchor="middle" fill="#ffd166" font-size="12" font-weight="800">Soare (F₁)</text>
+
+          <!-- Punctele Periheliu și Afeliu -->
+          <text id="periLabel" x="70" y="168" fill="#6ee7b7" font-size="11" font-weight="700">Periheliu (v max)</text>
+          <text id="apLabel" text-anchor="end" x="430" y="168" fill="#ff8e9b" font-size="11" font-weight="700">Afeliu (v min)</text>
+
+          <!-- Planeta de probă -->
+          <g id="planetGroup" transform="translate(260, 40)">
+            <circle cx="0" cy="0" r="7.5" fill="#58e1f2" stroke="#fff" stroke-width="1.8"/>
+            <!-- Vector viteză orbitală -->
+            <line id="velVector" x1="0" y1="0" x2="35" y2="0" stroke="#6ee7b7" stroke-width="3" marker-end="url(#arrowVel)"/>
+            <text id="velLabel" x="15" y="-10" fill="#6ee7b7" font-size="11" font-weight="700">v</text>
+          </g>
+        </svg>
+
+        <div class="statgrid">
+          <div class="stat">
+            <label>Distanța instantanee (r)</label>
+            <strong id="instantDist" style="color:var(--cyan)">1,00 UA</strong>
+          </div>
+          <div class="stat">
+            <label>Viteza orbitală instantanee (v)</label>
+            <strong id="instantSpeed" style="color:var(--green)">29,8 km/s</strong>
+          </div>
+        </div>
+
+        <div class="btnrow" style="margin-top:12px;justify-content:center">
+          <button id="btnPlayPause" class="smallbtn active-btn" onclick="togglePlay()">⏸ Pauză animație</button>
+          <button class="smallbtn" onclick="resetOrbit()">↺ Resetează orbita</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Parametrii orbitei</h3>
+        
+        <!-- Presetări planete reale -->
+        <label class="muted" style="font-size:.85rem">Planete de referință din Sistemul Solar:</label>
+        <div class="btnrow">
+          <button class="smallbtn" onclick="setPresetPlanet('venus')">Venus (e ≈ 0,007)</button>
+          <button class="smallbtn" onclick="setPresetPlanet('earth')">Pământ (e = 0,017)</button>
+          <button class="smallbtn" onclick="setPresetPlanet('mars')">Marte (e = 0,093)</button>
+          <button class="smallbtn" onclick="setPresetPlanet('mercury')">Mercur (e = 0,206)</button>
+          <button class="smallbtn" onclick="setPresetPlanet('comet')">Cometă (e = 0,550)</button>
+        </div>
+
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between">
+            <label for="eccSlider">Excentricitatea elipsei (e):</label>
+            <span class="badge-gold"><span id="eccDisplay">0.40</span></span>
+          </div>
+          <input id="eccSlider" type="range" min="0.0" max="0.75" step="0.001" value="0.40" oninput="updateKeplerParams()">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)">
+            <span>e = 0 (Cerc perfect)</span><span>e = 0,75 (Elipsă alungită)</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between">
+            <label for="semiMajorSlider">Semiaxa mare (a):</label>
+            <span class="badge-gold"><span id="semiMajorDisplay">1.00</span> UA</span>
+          </div>
+          <input id="semiMajorSlider" type="range" min="0.39" max="5.20" step="0.01" value="1.00" oninput="updateKeplerParams()">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)">
+            <span>0,39 UA (Mercur)</span><span>1,00 UA (Pământ)</span><span>5,20 UA (Jupiter)</span>
+          </div>
+        </div>
+
+        <!-- Opțiuni vizuale didactice -->
+        <div style="margin-top:16px;padding:10px;background:#0d1c2e;border:1px solid #1a3552;border-radius:10px">
+          <span style="display:block;font-size:.85rem;font-weight:700;color:var(--cyan);margin-bottom:6px">Vizualizare pedagogică:</span>
+          <label class="toggle-label"><input type="checkbox" id="chkSectors" onchange="toggleSectors()"> Ilustrează ariile egale (Legea a II-a)</label>
+          <label class="toggle-label"><input type="checkbox" id="chkVectors" checked onchange="toggleVectors()"> Vector viteză (v)</label>
+        </div>
+
+        <!-- Calcul Legea III -->
+        <div class="param-box" style="margin-top:14px">
+          <div class="param-title"><span>Calcul Legea a III-a a lui Kepler</span><span>T<sup>2</sup> = a<sup>3</sup></span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;font-size:.88rem">
+            <div>Semiaxa mare <b>a</b>: <span id="k3AVal" style="color:var(--cyan);font-weight:700">1,00 UA</span></div>
+            <div>Perioada <b>T</b>: <span id="k3TVal" style="color:var(--purple);font-weight:700">1,00 ani</span></div>
+          </div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:6px">
+            Relație aplicată prin construcție (T se calculează din a, deci raportul este 1 prin definiție; verificarea pe date observate este în tabelul de mai jos): T<sup>2</sup> = <span id="k3T2">1,00</span> &nbsp;|&nbsp; a<sup>3</sup> = <span id="k3A3">1,00</span> &nbsp;→&nbsp; <b>T²/a³ = 1,00</b> (în unități UA și ani terestri).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel comparativ planete reale clasa a IX-a -->
+    <h3 style="margin-top:22px">Date reale în Sistemul Solar (Verificarea Legii a III-a)</h3>
+    <div class="tablewrap card" style="padding:10px">
+      <table>
+        <thead>
+          <tr>
+            <th>Planetă</th>
+            <th>Semiaxa mare a (UA)</th>
+            <th>Perioada T (ani terestri)</th>
+            <th>a³</th>
+            <th>T²</th>
+            <th>Raport T² / a³</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Mercur</td><td>0,387</td><td>0,241</td><td>0,058</td><td>0,058</td><td>1,00</td></tr>
+          <tr><td>Venus</td><td>0,723</td><td>0,615</td><td>0,378</td><td>0,378</td><td>1,00</td></tr>
+          <tr><td>Pământ</td><td>1,000</td><td>1,000</td><td>1,000</td><td>1,000</td><td>1,000</td></tr>
+          <tr><td>Marte</td><td>1,524</td><td>1,881</td><td>3,540</td><td>3,538</td><td>1,00</td></tr>
+          <tr><td>Jupiter</td><td>5,204</td><td>11,862</td><td>140,9</td><td>140,7</td><td>1,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Limitele modelului didactic -->
+    <div class="note" style="margin-top:16px">
+      <strong>Limite ale modelului didactic (Ce trebuie precizat la clasă):</strong>
+      <ul style="margin:6px 0 0;padding-left:18px;font-size:.87rem">
+        <li><b>Problema a două corpuri:</b> Se neglijează complet atracțiile reciproce dintre planete (perturbațiile gravitaționale).</li>
+        <li><b>Masa Soarelui mult mai mare (M ≫ m):</b> Considerăm Soarele fix în focar. În realitate, ambele corpuri orbitează în jurul centrului comun de masă (baricentru).</li>
+        <li><b>Cadru newtonian:</b> Nu sunt incluse corecțiile relativiste (precum precesia periheliului lui Mercur explicată de Relativitatea Generală).</li>
+        <li><b>Excentricitate exagerată vizual:</b> Șapte dintre cele opt planete au orbite aproape circulare (e &lt; 0,1); singura excepție este Mercur (e = 0,206). Pentru a face variația de viteză vizibilă ochiului elevului, glisorul permite excentricități mai mari (model cometar).</li>
+      </ul>
+    </div>
+
+    <!-- Întrebare interactivă secvența 5 -->
+    <div class="question">
+      <strong>Verificare conceptuală (Clasa a IX-a)</strong>
+      <p>O cometă se deplasează pe o orbită foarte alungită în jurul Soarelui. În ce punct al traiectoriei viteza ei are valoarea maximă și cum justifică fizica acest lucru?</p>
+      <div class="answers" id="q5">
+        <button class="answer" onclick="answer5(this,false)">A. La afeliu, pentru că distanța mare permite acumularea de energie de la alte stele.</button>
+        <button class="answer" onclick="answer5(this,true)">B. La periheliu, pentru că raza vectoare este minimă și, conform conservării momentului cinetic (sau Legii a II-a), viteza trebuie să fie maximă.</button>
+        <button class="answer" onclick="answer5(this,false)">C. Viteza este riguros constantă pe tot parcursul orbitei, conform principiului inerției.</button>
+      </div>
+      <div class="feedback" id="feedback5" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ETAPA 6: BALANȚA LUI CAVENDISH (CLASA A IX-A) -->
+  <section id="stage6" class="panel hidden">
+    <span class="pill">Etapa 6 · Măsurarea atracției gravitaționale (Clasa a IX-a)</span>
+    <h2 style="margin-top:10px">Experimentul Cavendish: măsurarea atracției gravitaționale și constanta G<sub>N</sub></h2>
+    <p class="muted">
+      În 1798, Henry Cavendish a măsurat pentru prima dată în laborator forța extrem de slabă de atracție gravitațională dintre două corpuri obișnuite, folosind o <b>balanță de torsiune</b> extrem de sensibilă (aparatul fusese proiectat de John Michell).
+    </p>
+
+    <!-- Comparație fundamentală G_N vs g -->
+    <div class="layout" style="margin-top:12px">
+      <div class="param-box" style="border-left:4px solid var(--gold)">
+        <div class="param-title"><span>Constanta gravitațională universală</span><span>G<sub>N</sub></span></div>
+        <p style="font-size:1.15rem;font-weight:800;color:var(--gold);margin:4px 0">6,674 × 10<sup>-11</sup> <span style="font-size:.8rem;color:var(--muted)">N·m²/kg²</span></p>
+        <p class="muted" style="font-size:.84rem">
+          Este o <b>constantă fundamentală a Universului</b>. Indică intensitatea absolută a interacțiunii gravitaționale oriunde în cosmos, indiferent de corpurile sau mediul dintre ele.
+        </p>
+      </div>
+
+      <div class="param-box" style="border-left:4px solid var(--cyan)">
+        <div class="param-title"><span>Accelerația gravitațională</span><span>g</span></div>
+        <p style="font-size:1.15rem;font-weight:800;color:var(--cyan);margin:4px 0">g = (G<sub>N</sub> · M) / r<sup>2</sup> <span style="font-size:.8rem;color:var(--muted)">(~9,81 N/kg la sol)</span></p>
+        <p class="muted" style="font-size:.84rem">
+          Este o <b>proprietate locală a câmpului</b>. Valoarea lui <i>g</i> depinde de masa planetei (M) și de distanța față de centru (r). Pe Lună, <i>g</i> este de 6 ori mai mic, dar <i>G<sub>N</sub></i> este identic!
+        </p>
+      </div>
+    </div>
+
+    <!-- Simulare Schematică Balanță -->
+    <div class="layout" style="margin-top:16px">
+      <!-- Stânga: Vedere de sus a balanței de torsiune -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3>Vedere schematică de sus (Plan orizontal)</h3>
+          <span class="pill" style="background:#133347;color:var(--cyan)">Unghi torsiune: <b id="thetaDegText">0,23°</b></span>
+        </div>
+
+        <svg id="cavendishSvg" viewBox="0 0 520 400" role="img" aria-label="Schema balanței de torsiune Cavendish">
+          <defs>
+            <radialGradient id="largeSphereGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#93c5fd"/>
+              <stop offset="50%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#1d3e75"/>
+            </radialGradient>
+            <radialGradient id="smallSphereGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#fde047"/>
+              <stop offset="60%" stop-color="#eab308"/>
+              <stop offset="100%" stop-color="#854d0e"/>
+            </radialGradient>
+            <marker id="arrowForce" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ff8e9b"/></marker>
+          </defs>
+
+          <!-- Fundal incintă protejată contra curenților de aer -->
+          <rect x="20" y="20" width="480" height="360" rx="14" fill="#091424" stroke="#1d3755" stroke-width="1.5"/>
+          <text x="35" y="42" fill="#5b7d9f" font-size="11">Carcasă de protecție (izolare termică și contra curenților)</text>
+
+          <!-- Grilă de unghi zero (reper ne-deviat) -->
+          <line x1="100" y1="200" x2="420" y2="200" stroke="#254366" stroke-dasharray="4,4" stroke-width="1.2"/>
+          <text x="430" y="204" fill="#6082a6" font-size="11">Reper zero (θ = 0)</text>
+
+          <!-- Metoda optică: Fasciculul laser / lumina reflectată pe scală -->
+          <g id="opticalLever">
+            <!-- Scala gradată la distanță L -->
+            <path d="M 475 140 Q 485 200 475 260" fill="none" stroke="#375577" stroke-width="3"/>
+            <text x="445" y="130" fill="#6ee7b7" font-size="10">Scală optică</text>
+            <!-- Fascicul incident -->
+            <line x1="260" y1="200" x2="478" y2="200" stroke="#6ee7b7" stroke-opacity=".25" stroke-width="1.5"/>
+            <!-- Fascicul reflectat (deviat cu 2*theta) -->
+            <line id="reflectedBeam" x1="260" y1="200" x2="478" y2="200" stroke="#6ee7b7" stroke-width="2"/>
+            <circle id="lightSpot" cx="478" cy="200" r="4" fill="#6ee7b7"/>
+          </g>
+
+          <!-- Sferele mari fixe M1 și M2 -->
+          <g id="largeSpheres">
+            <!-- M1 (sus-stânga) -->
+            <circle id="bigSphere1" cx="160" cy="135" r="30" fill="url(#largeSphereGrad)" stroke="#60a5fa" stroke-width="1.5"/>
+            <text id="bigSphere1Text" x="160" y="140" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">M</text>
+            
+            <!-- M2 (jos-dreapta) -->
+            <circle id="bigSphere2" cx="360" cy="265" r="30" fill="url(#largeSphereGrad)" stroke="#60a5fa" stroke-width="1.5"/>
+            <text id="bigSphere2Text" x="360" y="270" text-anchor="middle" fill="#fff" font-size="12" font-weight="800">M</text>
+          </g>
+
+          <!-- Tija mobilă suspendată pe firul de torsiune (se rotește cu unghiul theta) -->
+          <g id="torsionSystem">
+            <!-- Firul central de torsiune + oglinda -->
+            <circle cx="260" cy="200" r="8" fill="#ffd166"/>
+            <circle cx="260" cy="200" r="3" fill="#08111f"/>
+            <rect x="257" y="194" width="6" height="12" rx="1" fill="#e2e8f0"/>
+            <text x="260" y="186" text-anchor="middle" fill="#ffd166" font-size="11" font-weight="700">Fir torsiune & oglindă</text>
+
+            <!-- Tija rigidă ușoară (lungime L_tija = 260px) -->
+            <line id="tigeLine" x1="130" y1="200" x2="390" y2="200" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
+
+            <!-- Sfera mică m1 (stânga) -->
+            <g id="m1Group" transform="translate(130, 200)">
+              <circle cx="0" cy="0" r="12" fill="url(#smallSphereGrad)" stroke="#fef08a" stroke-width="1.2"/>
+              <text x="0" y="4" text-anchor="middle" fill="#08111f" font-size="10" font-weight="900">m</text>
+              <!-- Săgeata forței de atracție gravitațională F -->
+              <line id="forceVec1" x1="0" y1="0" x2="15" y2="-25" stroke="#ff8e9b" stroke-width="2.5" marker-end="url(#arrowForce)"/>
+              <text id="fLabel1" x="18" y="-28" fill="#ff8e9b" font-size="11" font-weight="700">F</text>
+            </g>
+
+            <!-- Sfera mică m2 (dreapta) -->
+            <g id="m2Group" transform="translate(390, 200)">
+              <circle cx="0" cy="0" r="12" fill="url(#smallSphereGrad)" stroke="#fef08a" stroke-width="1.2"/>
+              <text x="0" y="4" text-anchor="middle" fill="#08111f" font-size="10" font-weight="900">m</text>
+              <!-- Săgeata forței de atracție gravitațională F -->
+              <line id="forceVec2" x1="0" y1="0" x2="-15" y2="25" stroke="#ff8e9b" stroke-width="2.5" marker-end="url(#arrowForce)"/>
+              <text id="fLabel2" x="-26" y="32" fill="#ff8e9b" font-size="11" font-weight="700">F</text>
+            </g>
+          </g>
+
+          <!-- Cota distanței d dintre mase -->
+          <line id="distQuoteLine" x1="130" y1="200" x2="160" y2="135" stroke="#58e1f2" stroke-width="1" stroke-dasharray="2,2"/>
+          <text id="distQuoteText" x="135" y="160" fill="#58e1f2" font-size="11">d</text>
+        </svg>
+
+        <div class="statgrid" style="margin-top:10px">
+          <div class="stat">
+            <label>Forța gravitațională între m și M</label>
+            <strong id="gravForceText" style="color:var(--red)">1,54 × 10⁻⁷ N</strong>
+          </div>
+          <div class="stat">
+            <label>Deviația unghiulară la echilibru (θ)</label>
+            <strong id="thetaText" style="color:var(--gold)">0,23°</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dreapta: Controale interactive și model matematic -->
+      <div class="card">
+        <h3>Parametrii balanței</h3>
+
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between">
+            <label for="sliderBigM">Masa sferelor mari fixe (M):</label>
+            <span class="badge-gold"><span id="bigMDisplay">150</span> kg</span>
+          </div>
+          <input id="sliderBigM" type="range" min="20" max="300" step="10" value="150" oninput="updateCavendish()">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)">
+            <span>20 kg</span><span>150 kg (plumb)</span><span>300 kg</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between">
+            <label for="sliderSmallM">Masa sferelor mici suspendate (m):</label>
+            <span class="badge-gold"><span id="smallMDisplay">0.50</span> kg</span>
+          </div>
+          <input id="sliderSmallM" type="range" min="0.1" max="2.0" step="0.05" value="0.5" oninput="updateCavendish()">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)">
+            <span>0,10 kg</span><span>0,50 kg</span><span>2,00 kg</span>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between">
+            <label for="sliderDist">Distanța centru-centru (d):</label>
+            <span class="badge-gold"><span id="distDisplay">0.18</span> m</span>
+          </div>
+          <input id="sliderDist" type="range" min="0.17" max="0.35" step="0.01" value="0.18" oninput="updateCavendish()">
+          <div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)">
+            <span id="distMinLabel">0,17 m (contact)</span><span>0,18 m</span><span>0,35 m</span>
+          </div>
+        </div>
+
+        <!-- Principiul fizic de echilibru -->
+        <div class="param-box" style="margin-top:16px">
+          <div class="param-title"><span>Cum funcționează măsurarea?</span><span>Echilibrul momentelor</span></div>
+          <p style="font-size:.85rem;margin:6px 0;line-height:1.4">
+            Cele două forțe gravitaționale creează un cuplu de forțe care rotește tija:
+            <br><b style="color:var(--cyan)">M<sub>grav</sub> = 2 · F · (L / 2) = F · L</b>
+            <br>Răsucirea firului de suspensie opune un cuplu elastic rezistent de torsiune:
+            <br><b style="color:var(--gold)">M<sub>tors</sub> = C · θ</b>
+          </p>
+          <div style="font-size:.83rem;color:var(--muted);border-top:1px solid #1a3552;padding-top:6px;margin-top:6px">
+            La echilibru: <b>F · L = C · θ</b>. Măsurând unghiul de deviație <b>θ</b> cu ajutorul spotului de lumină reflectat de oglindă și cunoscând constanta de torsiune <b>C</b> a firului (determinată separat, din perioada de oscilație a sistemului, T = 2π√(I/C), unde I este momentul de inerție al părții mobile), se deduce <b>F</b> și apoi constanta <b>G<sub>N</sub></b> (în modelul simplificat se neglijează atracția dintre o sferă mică și sfera mare mai îndepărtată):
+            <div class="formula" style="font-size:1.05rem;padding:4px 0">G<sub>N</sub> = (C · θ · d<sup>2</sup>) / (M · m · L)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Limitele modelului didactic -->
+    <div class="note" style="margin-top:16px">
+      <strong>Precizare didactică esențială privind limitele modelului:</strong>
+      <p style="font-size:.86rem;margin:5px 0 0">
+        Această animație este o <b>reprezentare schematică calitativă</b> pentru a face vizibil principiul fizic de funcționare. Într-un experiment real:
+      </p>
+      <ul style="margin:4px 0 0;padding-left:18px;font-size:.84rem;color:var(--muted)">
+        <li><b>Forțele sunt incredibil de mici:</b> de ordinul a 10⁻⁷ N (echivalentul greutății unui grăunte microscopic de praf). Firul de torsiune folosit de Cavendish era extrem de subțire și fin (fir de cuarț sau bronz fosforos).</li>
+        <li><b>Efectul de oscilație amortizată:</b> Balanța reală nu merge instantaneu la echilibru; oscilează foarte lent (perioade de ordinul a zeci de minute) și necesită ore întregi pentru stabilizare.</li>
+        <li><b>Amplasarea unghiulară a sferelor mari:</b> În grafică, sferele mari <i>M</i> sunt menținute pe o poziție fixă pentru lizibilitate geometrică, iar rotația tijei este amplificată vizual (×16, maximum 8°). Valoarea numerică a lui <i>θ</i> este cea calculată fizic. Dimensiunile și distanțele desenate nu sunt la scară; distanța minimă <i>d</i> corespunde contactului dintre sferele de plumb (ρ = 11 340 kg/m³).</li>
+        <li><b>Determinarea istorică („Cântărirea Pământului”):</b> Cavendish nu a publicat direct valoarea lui <i>G<sub>N</sub></i>, ci a calculat masa și densitatea medie a Pământului din relația <i>g = G<sub>N</sub> · M<sub>P</sub> / R<sup>2</sup></i>.</li>
+      </ul>
+    </div>
+
+    <!-- Întrebare formativă clasa a IX-a -->
+    <div class="question">
+      <strong>Verificare conceptuală (Clasa a IX-a)</strong>
+      <p>De ce a fost nevoie de o balanță de torsiune și de o pârghie optică (oglindă și fascicul de lumină) pentru a determina forța gravitațională dintre mase din laborator?</p>
+      <div class="answers" id="q6">
+        <button class="answer" onclick="answer6(this,false)">A. Pentru că forța gravitațională dintre corpurile obișnuite este uriașă și ar rupe orice dinamometru normal.</button>
+        <button class="answer" onclick="answer6(this,true)">B. Deoarece forța este extrem de mică (ordinul micronewtonilor sau mai puțin), iar firul sensibil de torsiune și reflexia luminii pe o scală îndepărtată permit amplificarea unei deviații minuscule.</button>
+        <button class="answer" onclick="answer6(this,false)">C. Pentru a anula atracția gravitațională a Pământului, care altfel ar face imposibilă mișcarea maselor.</button>
+      </div>
+      <div class="feedback" id="feedback6" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <div class="footer">Laborator virtual de fizică · Model didactic creat de prof. Cânda Letiția</div>
+</main>
+
+<script>
+// ==========================================
+// CONSTANTE GENERALE & ETAPELE 1 - 4
+// ==========================================
+const gStandard = 9.81;
+const GN = 6.67430e-11;
+const M_EARTH = 5.9722e24;
+const R_EARTH = 6371000;
+const gSurface = (GN * M_EARTH) / (R_EARTH * R_EARTH);
+
+function fmt(x, digits=2){
+  return Number(x).toLocaleString('ro-RO', {minimumFractionDigits:digits, maximumFractionDigits:digits});
+}
+
+function showStage(n){
+  for(let i=1; i<=6; i++){
+    const panel = document.getElementById('stage' + i);
+    const tab = document.getElementById('tab' + i);
+    if(panel) panel.classList.toggle('hidden', n !== i);
+    if(tab) tab.classList.toggle('active', n === i);
+  }
+  if(n === 2) renderStage2();
+  if(n === 3) updateStage3();
+  if(n === 4) updateStage4();
+  if(n === 5) updateKeplerParams();
+  if(n === 6) updateCavendish();
+}
+
+// ETAPA 1
+function setMass(v){ document.getElementById('mass1').value = v; updateStage1(); }
+function updateStage1(){
+  const m = Number(document.getElementById('mass1').value);
+  const G = m * gStandard;
+  document.getElementById('mass1Value').textContent = fmt(m, 1);
+  document.getElementById('mass1Stat').textContent = fmt(m, 1) + ' kg';
+  document.getElementById('weight1Stat').textContent = fmt(G, 1) + ' N';
+  const len = 75 + (G / 196.2) * 80;
+  document.getElementById('forceArrow').setAttribute('y2', String(98 + len));
+}
+function answer1(btn, correct){
+  const group = document.getElementById('q1');
+  group.querySelectorAll('button').forEach(b => b.classList.remove('correct','wrong'));
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('feedback1').textContent = correct ? 'Corect. Dublarea masei dublează forța de greutate.' : 'Incorect. G = m · g este o relație liniară.';
+}
+
+// ETAPA 2
+let masses = [1, 2, 5, 10, 15];
+function addMeasurement(){
+  if(masses.length >= 10){ alert('Limita de măsurători atinsă.'); return; }
+  const next = Math.min(20, Math.max(...masses) + 1);
+  if(masses.includes(next)) return;
+  masses.push(next);
+  renderStage2();
+}
+function resetMeasurements(){ masses = [1, 2, 5, 10, 15]; renderStage2(); }
+function renderStage2(){
+  const body = document.getElementById('measurements');
+  body.innerHTML = '';
+  masses.slice().sort((a,b) => a - b).forEach(m => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + fmt(m, 1) + '</td><td>' + fmt(m * gStandard, 2) + '</td><td>' + fmt((m * gStandard)/m, 2) + '</td>';
+    body.appendChild(tr);
+  });
+  const avg = masses.reduce((sum, m) => sum + (m * gStandard)/m, 0) / masses.length;
+  document.getElementById('avgRatio').textContent = fmt(avg, 2) + ' N/kg';
+  const slopeFit = masses.reduce((sum, m) => sum + m * (m * gStandard), 0) / masses.reduce((sum, m) => sum + m * m, 0); // pantă prin origine (cele mai mici pătrate)
+  document.getElementById('slope').textContent = fmt(slopeFit, 2) + ' N/kg';
+  drawChart2();
+}
+function drawChart2(){
+  const svg = document.getElementById('chart');
+  const W = 500, H = 330, L = 58, R = 20, T = 20, B = 48, pw = W - L - R, ph = H - T - B;
+  const maxM = 20, maxG = 200;
+  const X = m => L + (m / maxM) * pw;
+  const Y = G => T + ph - (G / maxG) * ph;
+  let s = '<rect x="0" y="0" width="500" height="330" rx="10" fill="#0a1626"/>';
+  for(let m = 0; m <= 20; m += 5){
+    const x = X(m);
+    s += '<line x1="'+x+'" y1="'+T+'" x2="'+x+'" y2="'+(T+ph)+'" stroke="#20354d"/>';
+    s += '<text x="'+x+'" y="'+(T+ph+22)+'" text-anchor="middle" fill="#9db1ca" font-size="12">'+m+'</text>';
+  }
+  for(let G = 0; G <= 200; G += 50){
+    const y = Y(G);
+    s += '<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#20354d"/>';
+    s += '<text x="'+(L-10)+'" y="'+(y+4)+'" text-anchor="end" fill="#9db1ca" font-size="12">'+G+'</text>';
+  }
+  s += '<line x1="'+L+'" y1="'+(T+ph)+'" x2="'+(W-R)+'" y2="'+(T+ph)+'" stroke="#7892ae" stroke-width="1.5"/>';
+  s += '<line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+(T+ph)+'" stroke="#7892ae" stroke-width="1.5"/>';
+  s += '<line x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(20)+'" y2="'+Y(20*gStandard)+'" stroke="#58e1f2" stroke-width="3" stroke-linecap="round"/>';
+  masses.forEach(m => {
+    s += '<circle cx="'+X(m)+'" cy="'+Y(m*gStandard)+'" r="5" fill="#ffd166" stroke="#fff0bd" stroke-width="1.5"/>';
+  });
+  svg.innerHTML = s;
+}
+
+// ETAPA 3
+function calcG(latDeg, altMeters){
+  const phi = (latDeg * Math.PI) / 180;
+  const sinPhi = Math.sin(phi);
+  const sin2Phi = Math.sin(2 * phi);
+  const g0 = 9.780327 * (1 + 0.0053024 * sinPhi * sinPhi - 0.0000058 * sin2Phi * sin2Phi);
+  return g0 - 0.000003086 * altMeters;
+}
+function setPreset(lat, alt){
+  document.getElementById('latSlider').value = lat;
+  document.getElementById('altSlider').value = alt;
+  updateStage3();
+}
+function updateStage3(){
+  const lat = Number(document.getElementById('latSlider').value);
+  const alt = Number(document.getElementById('altSlider').value);
+  const m = Number(document.getElementById('mass3Slider').value);
+  document.getElementById('latDisplay').textContent = lat;
+  document.getElementById('altDisplay').textContent = alt;
+  document.getElementById('mass3Display').textContent = m;
+  const currentG = calcG(lat, alt);
+  document.getElementById('gValText').textContent = fmt(currentG, 3) + ' N/kg';
+  document.getElementById('gWeightText').textContent = fmt(m * currentG, 1) + ' N';
+  document.getElementById('bodyGroup').setAttribute('transform', 'rotate(' + (90 - lat) + ' 250 180)');
+}
+
+// ETAPA 4
+function updateStage4(){
+  const rRatio = parseFloat(document.getElementById('rSlider').value);
+  document.getElementById('rRatioDisplay').textContent = fmt(rRatio, 2);
+  const rMeters = rRatio * R_EARTH;
+  document.getElementById('distKm').textContent = fmt(rMeters / 1000, 0) + ' km';
+  document.getElementById('altKm').textContent = fmt((rMeters - R_EARTH) / 1000, 0) + ' km';
+  const gR = (GN * M_EARTH) / (rMeters * rMeters);
+  document.getElementById('gVal4').textContent = fmt(gR, 3) + ' N/kg';
+  document.getElementById('fVal4').textContent = fmt(1000 * gR, 1) + ' N';
+  const cx = 130, cy = 160;
+  const rPx = Math.min(340, rRatio * 45);
+  document.getElementById('orbitPath').setAttribute('r', rPx);
+  document.getElementById('satGroup').setAttribute('transform', 'translate(' + (cx + rPx) + ',' + cy + ')');
+  document.getElementById('rLine').setAttribute('x2', cx + rPx);
+  document.getElementById('rTextLabel').setAttribute('x', cx + rPx / 2);
+  document.getElementById('rTextLabel').textContent = 'r = ' + fmt(rRatio, 2) + ' R';
+}
+
+// ==========================================
+// ETAPA 5: SIMULARE KEPLER (CLASA A IX-A)
+// ==========================================
+let keplerState = {
+  a_UA: 1.0,          // Semiaxa mare în UA
+  e: 0.40,            // Excentricitate
+  M: 0,               // Anomalia medie (radiani)
+  isPlaying: true,
+  showSectors: false,
+  showVectors: true
+};
+
+const cxCanvas = 260, cyCanvas = 190;
+const scaleA = 180; // Semiaxa mare desenată la 180 pixeli
+
+// Rezolvarea numerică a ecuației lui Kepler: M = E - e * sin(E) prin metoda Newton-Raphson
+function solveKepler(M, e){
+  let E = M;
+  for(let i = 0; i < 8; i++){
+    const dE = (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+    E -= dE;
+    if(Math.abs(dE) < 1e-6) break;
+  }
+  return E;
+}
+
+function updateKeplerParams(){
+  keplerState.e = parseFloat(document.getElementById('eccSlider').value);
+  keplerState.a_UA = parseFloat(document.getElementById('semiMajorSlider').value);
+
+  document.getElementById('eccDisplay').textContent = fmt(keplerState.e, 3);
+  document.getElementById('semiMajorDisplay').textContent = fmt(keplerState.a_UA, 2);
+
+  // Legea a III-a: T^2 = a^3  =>  T = a^(3/2) (în ani dacă a este în UA)
+  const T_ani = Math.pow(keplerState.a_UA, 1.5);
+  const a3 = Math.pow(keplerState.a_UA, 3);
+  const T2 = Math.pow(T_ani, 2);
+
+  document.getElementById('k3AVal').textContent = fmt(keplerState.a_UA, 2) + ' UA';
+  document.getElementById('k3TVal').textContent = fmt(T_ani, 2) + ' ani';
+  document.getElementById('k3T2').textContent = fmt(T2, 2);
+  document.getElementById('k3A3').textContent = fmt(a3, 2);
+
+  // Geometria elipsei în coordonate SVG
+  const aPx = scaleA;
+  const bPx = aPx * Math.sqrt(Math.max(0.01, 1 - keplerState.e * keplerState.e));
+  const cPx = aPx * keplerState.e; // Distanța focală
+
+  const ellipse = document.getElementById('orbitEllipse');
+  ellipse.setAttribute('rx', aPx);
+  ellipse.setAttribute('ry', bPx);
+
+  // Focarele elipsei:
+  // Centrul elipsei este la (cxCanvas, cyCanvas)
+  // Soarele în F1 la stânga (periheliul la stânga): x_F1 = cxCanvas - cPx
+  const sunX = cxCanvas - cPx;
+  const f2X = cxCanvas + cPx;
+
+  const sunCircle = document.getElementById('sunCircle');
+  sunCircle.setAttribute('cx', sunX);
+  document.getElementById('sunText').setAttribute('x', sunX);
+
+  const f2Circle = document.getElementById('focalPoint2');
+  f2Circle.setAttribute('cx', f2X);
+  document.getElementById('f2Label').setAttribute('x', f2X);
+
+  // Poziționare etichete periheliu / afeliu
+  document.getElementById('periLabel').setAttribute('x', (cxCanvas - aPx) - 5);
+  document.getElementById('apLabel').setAttribute('x', (cxCanvas + aPx) - 8);
+
+  drawSectorsIfActive();
+}
+
+function setPresetPlanet(key){
+  if(key === 'venus'){
+    document.getElementById('eccSlider').value = 0.007;
+    document.getElementById('semiMajorSlider').value = 0.72;
+  } else if(key === 'earth'){
+    document.getElementById('eccSlider').value = 0.017;
+    document.getElementById('semiMajorSlider').value = 1.00;
+  } else if(key === 'mars'){
+    document.getElementById('eccSlider').value = 0.093;
+    document.getElementById('semiMajorSlider').value = 1.52;
+  } else if(key === 'mercury'){
+    document.getElementById('eccSlider').value = 0.206;
+    document.getElementById('semiMajorSlider').value = 0.39;
+  } else if(key === 'comet'){
+    document.getElementById('eccSlider').value = 0.55;
+    document.getElementById('semiMajorSlider').value = 2.20;
+  }
+  updateKeplerParams();
+}
+
+function togglePlay(){
+  keplerState.isPlaying = !keplerState.isPlaying;
+  const btn = document.getElementById('btnPlayPause');
+  btn.textContent = keplerState.isPlaying ? '⏸ Pauză animație' : '▶ Pornește animație';
+  btn.classList.toggle('active-btn', keplerState.isPlaying);
+}
+
+function resetOrbit(){
+  keplerState.M = 0;
+}
+
+function toggleSectors(){
+  keplerState.showSectors = document.getElementById('chkSectors').checked;
+  document.getElementById('sectorBadge').style.display = keplerState.showSectors ? 'inline-block' : 'none';
+  drawSectorsIfActive();
+}
+
+function toggleVectors(){
+  keplerState.showVectors = document.getElementById('chkVectors').checked;
+  document.getElementById('velVector').style.display = keplerState.showVectors ? 'inline' : 'none';
+  document.getElementById('velLabel').style.display = keplerState.showVectors ? 'inline' : 'none';
+}
+
+// Ilustrare didactică a Legii a II-a: desenează două sectoare cu interval de timp Δt identic (unul la periheliu, altul la afeliu)
+function drawSectorsIfActive(){
+  const grp = document.getElementById('keplerSectorsGroup');
+  grp.innerHTML = '';
+  if(!keplerState.showSectors) return;
+
+  const aPx = scaleA;
+  const bPx = aPx * Math.sqrt(Math.max(0.01, 1 - keplerState.e * keplerState.e));
+  const cPx = aPx * keplerState.e;
+  const sunX = cxCanvas - cPx;
+
+  // Calcul puncte pentru un sector unghiular corespunzător la ΔM = 0.5 radiani
+  function getPoint(E){
+    const x = cxCanvas - aPx * Math.cos(E);
+    const y = cyCanvas - bPx * Math.sin(E);
+    return {x, y};
+  }
+
+  // Sector 1: La Periheliu (E în jur de 0) -> E de la -0.25 la +0.25
+  const dE_peri = 0.32;
+  const p1 = getPoint(-dE_peri);
+  const p2 = getPoint(dE_peri);
+  const pathPeri = `M ${sunX} ${cyCanvas} L ${p1.x} ${p1.y} A ${aPx} ${bPx} 0 0 1 ${p2.x} ${p2.y} Z`;
+
+  // Sector 2: La Afeliu (E în jur de pi) -> E de la pi - 0.12 la pi + 0.12 (bază mai îngustă dar braț lung)
+  // Semilărgimea dE_ap rezultă din condiția de arii egale (ΔM egal):
+  // 2h + 2e·sin(h) = 2·dE_peri − 2e·sin(dE_peri)
+  const targetDM = 2 * dE_peri - 2 * keplerState.e * Math.sin(dE_peri);
+  let lo = 0, hi = Math.PI / 2;
+  for(let i = 0; i < 40; i++){
+    const mid = (lo + hi) / 2;
+    if(2 * mid + 2 * keplerState.e * Math.sin(mid) < targetDM) lo = mid; else hi = mid;
+  }
+  const dE_ap = (lo + hi) / 2;
+  const p3 = getPoint(Math.PI - dE_ap);
+  const p4 = getPoint(Math.PI + dE_ap);
+  const pathAp = `M ${sunX} ${cyCanvas} L ${p3.x} ${p3.y} A ${aPx} ${bPx} 0 0 1 ${p4.x} ${p4.y} Z`;
+
+  grp.innerHTML = `
+    <path d="${pathPeri}" fill="#ffd166" fill-opacity="0.28" stroke="#ffd166" stroke-width="1.2"/>
+    <path d="${pathAp}" fill="#58e1f2" fill-opacity="0.28" stroke="#58e1f2" stroke-width="1.2"/>
+    <text x="${sunX - 45}" y="${cyCanvas - 45}" fill="#ffd166" font-size="11" font-weight="700">Aria A₁</text>
+    <text x="${sunX + 110}" y="${cyCanvas - 45}" fill="#58e1f2" font-size="11" font-weight="700">Aria A₂ = A₁</text>
+  `;
+}
+
+// Bucle de animație (60 FPS)
+let lastTimestamp = 0;
+function animateKepler(timestamp){
+  if(!lastTimestamp) lastTimestamp = timestamp;
+  const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+  lastTimestamp = timestamp;
+
+  if(keplerState.isPlaying){
+    // Viteza unghiulară medie n = 2*pi / T
+    // Scalăm pentru o redare fluentă: 1 an orbital = 8 secunde reale la a=1 UA
+    const T_ani = Math.pow(keplerState.a_UA, 1.5);
+    const meanMotion = (2 * Math.PI) / (8 * T_ani); // perioada animată = 8 s × T (T în ani) => T²∝a³ respectat și în animație
+    keplerState.M = (keplerState.M + meanMotion * dt) % (2 * Math.PI);
+  }
+
+  // Calcul anomalia excentrică E
+  const E = solveKepler(keplerState.M, keplerState.e);
+
+  // Poziția pe elipsă în pixeli
+  const aPx = scaleA;
+  const bPx = aPx * Math.sqrt(Math.max(0.01, 1 - keplerState.e * keplerState.e));
+  const cPx = aPx * keplerState.e;
+  const sunX = cxCanvas - cPx;
+
+  // x eliptic centrat: -a * cos(E) plasează periheliul la E = 0 (la stânga)
+  const planetX = cxCanvas - aPx * Math.cos(E);
+  const planetY = cyCanvas - bPx * Math.sin(E);
+
+  // Actualizare corp planetar
+  const planetGrp = document.getElementById('planetGroup');
+  planetGrp.setAttribute('transform', 'translate(' + planetX + ',' + planetY + ')');
+
+  // Actualizare raza vectoare (Soare -> Planetă)
+  const radLine = document.getElementById('radiusVector');
+  radLine.setAttribute('x1', sunX);
+  radLine.setAttribute('y1', cyCanvas);
+  radLine.setAttribute('x2', planetX);
+  radLine.setAttribute('y2', planetY);
+
+  // Calcule fizice reale: distanța r și viteza orbitală v (ecuația forței vii / vis-viva)
+  // r = a * (1 - e * cos(E)) în UA
+  const rUA = keplerState.a_UA * (1 - keplerState.e * Math.cos(E));
+  // v = sqrt(GM * (2/r - 1/a)); pentru Pământ la 1 UA viteza medie este ~ 29.78 km/s
+  // v [km/s] ≈ 29.78 * sqrt(2/rUA - 1/keplerState.a_UA)
+  const vKmS = 29.78 * Math.sqrt(Math.max(0.1, (2 / rUA) - (1 / keplerState.a_UA)));
+
+  document.getElementById('instantDist').textContent = fmt(rUA, 2) + ' UA';
+  document.getElementById('instantSpeed').textContent = fmt(vKmS, 1) + ' km/s';
+
+  // Vectorul viteză orbitală v (tangent la elipsă)
+  // Derivatele față de E: dx/dE = a * sin(E), dy/dE = -b * cos(E)
+  const vxDir = aPx * Math.sin(E);
+  const vyDir = -bPx * Math.cos(E);
+  const vNorm = Math.sqrt(vxDir * vxDir + vyDir * vyDir) || 1;
+
+  // Lungimea săgeții scalată proporțional cu viteza instantanee
+  const vArrowLen = (vKmS / 30) * 28;
+  const arrowX2 = (vxDir / vNorm) * vArrowLen;
+  const arrowY2 = (vyDir / vNorm) * vArrowLen;
+
+  const velVec = document.getElementById('velVector');
+  velVec.setAttribute('x2', arrowX2);
+  velVec.setAttribute('y2', arrowY2);
+
+  const velLbl = document.getElementById('velLabel');
+  velLbl.setAttribute('x', arrowX2 * 1.2);
+  velLbl.setAttribute('y', arrowY2 * 1.2);
+
+  requestAnimationFrame(animateKepler);
+}
+
+function answer5(btn, correct){
+  const group = document.getElementById('q5');
+  group.querySelectorAll('button').forEach(b => b.classList.remove('correct','wrong'));
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('feedback5').textContent = correct
+    ? 'Excelent! La periheliu distanța r este minimă. Din conservarea momentului cinetic (L = m·r·v = constant) sau din Legea a II-a a ariilor rezultă că viteza este maximă.'
+    : 'Atenție: planeta accelerează pe măsură ce se apropie de Soare și atinge viteza maximă la periheliu (distanța minimă).';
+}
+
+// Pornire inițială
+
+// ==========================================
+// ETAPA 6: BALANȚA LUI CAVENDISH
+// ==========================================
+const L_TIJA_METERS = 1.8; // Lungimea reală a tijei din model (1,8 m)
+const C_TORSIUNE = 7.0e-5; // Constanta de torsiune a firului (N * m / rad), ordin de mărime realist => θ ≈ 0,2°
+const RHO_PB = 11340;      // Densitatea plumbului (kg/m³), pentru distanța minimă de contact
+const CX_CAV = 260, CY_CAV = 200;  // Centrul balanței pe ecran
+const R_TIJA_PX = 130;     // Semi-lungimea tijei în pixeli (L = 260px)
+
+function updateCavendish(){
+  const M = parseFloat(document.getElementById('sliderBigM').value);
+  const m = parseFloat(document.getElementById('sliderSmallM').value);
+  const rBig = Math.cbrt(3 * M / (4 * Math.PI * RHO_PB));
+  const rSmall = Math.cbrt(3 * m / (4 * Math.PI * RHO_PB));
+  const dMin = Math.ceil((rBig + rSmall) * 100 - 1e-9) / 100; // contact între sfere
+  const distSlider = document.getElementById('sliderDist');
+  distSlider.min = dMin.toFixed(2);
+  if(parseFloat(distSlider.value) < dMin) distSlider.value = dMin.toFixed(2);
+  document.getElementById('distMinLabel').textContent = fmt(dMin, 2) + ' m (contact)';
+  const d = parseFloat(distSlider.value);
+
+  document.getElementById('bigMDisplay').textContent = fmt(M, 0);
+  document.getElementById('smallMDisplay').textContent = fmt(m, 2);
+  document.getElementById('distDisplay').textContent = fmt(d, 2);
+
+  // 1. Calcul forță gravitațională reală: F = GN * (M * m) / d^2
+  const F_grav = GN * (M * m) / (d * d);
+
+  // 2. Momentul cuplului gravitațional: M_grav = F * L_TIJA_METERS
+  const M_grav = F_grav * L_TIJA_METERS;
+
+  // 3. Unghiul teoretic de torsiune la echilibru: theta = M_grav / C_TORSIUNE (radiani)
+  const thetaRad = M_grav / C_TORSIUNE;
+  const thetaDeg = (thetaRad * 180) / Math.PI;
+
+  // Afișare științifică a forței reale (în notație exponențială curată)
+  const fExponent = Math.floor(Math.log10(F_grav));
+  const fMantissa = F_grav / Math.pow(10, fExponent);
+  document.getElementById('gravForceText').innerHTML = fmt(fMantissa, 2) + ' × 10<sup>' + fExponent + '</sup> N';
+  document.getElementById('thetaText').textContent = fmt(thetaDeg, 2) + '°';
+  document.getElementById('thetaDegText').textContent = fmt(thetaDeg, 2) + '°';
+
+  // 4. Reprezentare grafică schematică:
+  // Amplificare unghiulară vizuală pentru lizibilitate
+  const visualAngleDeg = Math.min(8, thetaDeg * 16);
+  const visualAngleRad = (visualAngleDeg * Math.PI) / 180;
+
+  // Coordonatele capetelor tijei rotite
+  const cosT = Math.cos(visualAngleRad);
+  const sinT = Math.sin(visualAngleRad);
+
+  // Sens de rotație: capetele tijei se deplasează spre sferele mari (stânga în sus, dreapta în jos)
+  const x1 = CX_CAV - R_TIJA_PX * cosT;
+  const y1 = CY_CAV - R_TIJA_PX * sinT;
+
+  const x2 = CX_CAV + R_TIJA_PX * cosT;
+  const y2 = CY_CAV + R_TIJA_PX * sinT;
+
+  // Actualizare linia tijei
+  const tige = document.getElementById('tigeLine');
+  tige.setAttribute('x1', x1);
+  tige.setAttribute('y1', y1);
+  tige.setAttribute('x2', x2);
+  tige.setAttribute('y2', y2);
+
+  // Actualizare poziție mase suspendate mici m1 și m2
+  document.getElementById('m1Group').setAttribute('transform', 'translate(' + x1 + ',' + y1 + ')');
+  document.getElementById('m2Group').setAttribute('transform', 'translate(' + x2 + ',' + y2 + ')');
+
+  // Poziționarea sferelor mari M1 și M2 în funcție de distanța aleasă d
+  // Sferele mari sunt FIXE (nu urmează tija); poziția depinde doar de d
+  const dPx = 60 + ((d - dMin) / (0.35 - dMin)) * 40;
+  const big1X = CX_CAV - R_TIJA_PX + 18;
+  const big1Y = CY_CAV - dPx;
+  const big2X = CX_CAV + R_TIJA_PX - 18;
+  const big2Y = CY_CAV + dPx;
+
+  const bs1 = document.getElementById('bigSphere1');
+  bs1.setAttribute('cx', big1X);
+  bs1.setAttribute('cy', big1Y);
+  document.getElementById('bigSphere1Text').setAttribute('x', big1X);
+  document.getElementById('bigSphere1Text').setAttribute('y', big1Y + 5);
+
+  const bs2 = document.getElementById('bigSphere2');
+  bs2.setAttribute('cx', big2X);
+  bs2.setAttribute('cy', big2Y);
+  document.getElementById('bigSphere2Text').setAttribute('x', big2X);
+  document.getElementById('bigSphere2Text').setAttribute('y', big2Y + 5);
+
+  // Cota distanței d
+  const qLine = document.getElementById('distQuoteLine');
+  qLine.setAttribute('x1', x1);
+  qLine.setAttribute('y1', y1);
+  qLine.setAttribute('x2', big1X);
+  qLine.setAttribute('y2', big1Y);
+
+  const qText = document.getElementById('distQuoteText');
+  qText.setAttribute('x', (x1 + big1X) / 2 - 14);
+  qText.setAttribute('y', (y1 + big1Y) / 2);
+
+  // Săgețile vectorilor de forță F (orientate de la m la M)
+  const dx1 = big1X - x1, dy1 = big1Y - y1;
+  const len1 = Math.sqrt(dx1*dx1 + dy1*dy1) || 1;
+  const fArrowPx = 28;
+  const vec1 = document.getElementById('forceVec1');
+  vec1.setAttribute('x2', (dx1 / len1) * fArrowPx);
+  vec1.setAttribute('y2', (dy1 / len1) * fArrowPx);
+
+  const dx2 = big2X - x2, dy2 = big2Y - y2;
+  const len2 = Math.sqrt(dx2*dx2 + dy2*dy2) || 1;
+  const vec2 = document.getElementById('forceVec2');
+  vec2.setAttribute('x2', (dx2 / len2) * fArrowPx);
+  vec2.setAttribute('y2', (dy2 / len2) * fArrowPx);
+
+  // Pârghia optică: fasciculul reflectat se rotește cu 2 * visualAngle
+  const opticalAngleRad = 2 * visualAngleRad;
+  const scaleDistPx = 218;
+  const spotY = CY_CAV + scaleDistPx * Math.sin(opticalAngleRad); // fasciculul se rotește în același sens cu tija
+  const spotX = CX_CAV + scaleDistPx * Math.cos(opticalAngleRad);
+
+  const beam = document.getElementById('reflectedBeam');
+  beam.setAttribute('x2', spotX);
+  beam.setAttribute('y2', spotY);
+
+  const spot = document.getElementById('lightSpot');
+  spot.setAttribute('cx', spotX);
+  spot.setAttribute('cy', spotY);
+}
+
+function answer6(btn, correct){
+  const group = document.getElementById('q6');
+  group.querySelectorAll('button').forEach(b => b.classList.remove('correct','wrong'));
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('feedback6').textContent = correct
+    ? 'Excelent! Forța gravitațională dintre mase de laborator este infimă (~10⁻⁷ N). Oglinda atașată firului funcționează ca un amplificator optic fără frecare: la o distanță de câțiva metri, o rotație de doar o fracțiune de grad produce o deplasare vizibilă de câțiva centimetri pe scală.'
+    : 'Atenție la ordinul de mărime: gravitația este cea mai slabă dintre interacțiunile fundamentale. Între două corpuri de laborator de câteva kilograme, forța abia ajunge la zecimi de micronewton.';
+}
+
+
+updateStage1();
+renderStage2();
+updateStage3();
+updateStage4();
+updateKeplerParams();
+updateCavendish();
+requestAnimationFrame(animateKepler);
+</script>
+</body>
+</html>

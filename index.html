@@ -78,16 +78,16 @@ tbody tr:last-child td{border-bottom:0}
 </header>
 <main class="wrap">
   <nav class="tabs" aria-label="Etapele laboratorului">
-    <button class="tab" id="tab1" onclick="showStage(1)">01 · Observăm forța</button>
+    <button class="tab active" id="tab1" onclick="showStage(1)">01 · Observăm forța</button>
     <button class="tab" id="tab2" onclick="showStage(2)">02 · Raportul G/m</button>
     <button class="tab" id="tab3" onclick="showStage(3)">03 · Variația lui g pe Pământ</button>
     <button class="tab" id="tab4" onclick="showStage(4)">04 · Dependența de distanță</button>
-    <button class="tab active" id="tab5" onclick="showStage(5)">05 · Legile lui Kepler</button>
+    <button class="tab" id="tab5" onclick="showStage(5)">05 · Legile lui Kepler</button>
     <button class="tab" id="tab6" onclick="showStage(6)">06 · Balanța Cavendish</button>
   </nav>
 
   <!-- ETAPA 1 -->
-  <section id="stage1" class="panel hidden">
+  <section id="stage1" class="panel">
     <span class="pill">Etapa 1 · Explorare</span>
     <h2 style="margin-top:10px">Cum acționează forța de greutate?</h2>
     <p class="muted">Modifică masa corpului. Observă valoarea forței și sensul vectorului care o reprezintă.</p>
@@ -271,7 +271,7 @@ tbody tr:last-child td{border-bottom:0}
   </section>
 
   <!-- ETAPA 5: LEGILE LUI KEPLER (CLASA A IX-A) -->
-  <section id="stage5" class="panel">
+  <section id="stage5" class="panel hidden">
     <span class="pill">Etapa 5 · Mecanică cerească (Clasa a IX-a)</span>
     <h2 style="margin-top:10px">Legile lui Kepler și dinamica orbitală</h2>
     <p class="muted">Explorează mișcarea unei planete în jurul Soarelui sub acțiunea forței de atracție gravitațională universale.</p>
